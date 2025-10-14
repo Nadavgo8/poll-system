@@ -1,5 +1,5 @@
 // Vote: one user's vote for one option in one poll
-module.exports = (sequelize, DataTypes) => {
+const define = (sequelize, DataTypes) => {
   const Vote = sequelize.define("Vote", {
     username: { type: DataTypes.STRING(100), allowNull: false }, // typed by the user (no auth)
   });
@@ -9,3 +9,5 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Vote;
 };
+
+export default define;

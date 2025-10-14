@@ -1,5 +1,5 @@
 // Poll: the poll itself
-module.exports = (sequelize, DataTypes) => {
+const define = (sequelize, DataTypes) => {
   const Poll = sequelize.define("Poll", {
     title: { type: DataTypes.STRING(255), allowNull: false },
     creator: { type: DataTypes.STRING(100), allowNull: false }, // who created the poll
@@ -18,3 +18,5 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Poll;
 };
+
+export default define;

@@ -1,6 +1,14 @@
 {
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js",
+    "migrate": "sequelize-cli db:migrate"
+  },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "mysql2": "^3.15.2",
     "sequelize": "^6.37.7"
   }

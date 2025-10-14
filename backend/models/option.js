@@ -1,5 +1,5 @@
 // Option: one answer choice within a poll
-module.exports = (sequelize, DataTypes) => {
+const define = (sequelize, DataTypes) => {
   const Option = sequelize.define("Option", {
     text: { type: DataTypes.STRING(255), allowNull: false },
     position: { type: DataTypes.INTEGER, allowNull: false }, // keeps original order (0..7)
@@ -14,3 +14,5 @@ module.exports = (sequelize, DataTypes) => {
   };
   return Option;
 };
+
+export default define;
