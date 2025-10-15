@@ -1,133 +1,90 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-function Bar({ pct }) {
-  return (
-    <div className="bar">
-      <div className="barFill" style={{ width: `${pct}%` }} />
-    </div>
-  );
-}
+import { Card, Button, Alert, Spinner } from "react-bootstrap";
+import { api } from "../services/api";
+import UsernameInput from "../components/UsernameInput";
+import OptionRadioGroup from "../components/OptionRadioGroup";
+import ResultsList from "../components/ResultsList";
 
 export default function PollPage() {
   const { id } = useParams();
   const [poll, setPoll] = useState(null);
   const [username, setUsername] = useState(localStorage.username || "");
   const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
 
   async function load() {
-    setMsg("");
-    const r = await fetch(`/api/polls/${id}`);
-    if (r.ok) setPoll(await r.json());
-    else setMsg("Poll not found.");
-  }
-
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
-  const total = poll?.totalVotes ?? 0;
-
-  async function vote() {
-    if (!username.trim() || !selected) return;
-    setLoading(true);
-    setMsg("");
+    setErr("");
     try {
-      localStorage.username = username.trim();
-      const r = await fetch(`/api/polls/${id}/votes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.trim(),
-          optionId: selected,
-        }),
-      });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.message || "Vote failed");
+      const j = await api.getPoll(id);
       setPoll(j);
     } catch (e) {
-      setMsg(e.message);
+      setErr(e.message);
+    }
+  }
+  useEffect(() => {
+    load();
+  }, [id]);
+
+  async function submitVote() {
+    if (!username.trim() || !selected) return;
+    setBusy(true);
+    setErr("");
+    try {
+      localStorage.username = username.trim();
+      const j = await api.vote(id, {
+        username: username.trim(),
+        optionId: selected,
+      });
+      setPoll(j);
+    } catch (e) {
+      setErr(e.message);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   }
 
-  const shareUrl = useMemo(() => `${window.location.origin}/p/${id}`, [id]);
-
-  if (!poll)
-    return (
-      <div className="card">
-        Loading… {msg && <div className="err">{msg}</div>}
-      </div>
-    );
+  if (!poll) return <Spinner animation="border" role="status" />;
 
   return (
-    <div className="grid">
-      <section className="card">
-        <h2>{poll.title}</h2>
-        <p className="muted">Created by {poll.creator}</p>
+    <div className="d-grid gap-3">
+      <Card body>
+        <h4 className="mb-1">{poll.title}</h4>
+        <div className="text-muted mb-3">Created by {poll.creator}</div>
 
-        <label className="field">
-          <span>Username</span>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Type a name to vote"
-          />
-        </label>
+        <UsernameInput value={username} onChange={setUsername} />
+        <OptionRadioGroup
+          options={poll.options}
+          selected={selected}
+          onSelect={setSelected}
+        />
 
-        <div className="choices">
-          {poll.options.map((o) => (
-            <label key={o.id} className="choice">
-              <input
-                type="radio"
-                name="opt"
-                checked={selected === o.id}
-                onChange={() => setSelected(o.id)}
-              />
-              <span>{o.text}</span>
-            </label>
-          ))}
-        </div>
-
-        <div className="actions">
-          <button
-            onClick={vote}
-            disabled={!username.trim() || !selected || loading}
+        {err && <Alert variant="danger">{err}</Alert>}
+        <div className="d-flex gap-2">
+          <Button
+            onClick={submitVote}
+            disabled={!username.trim() || !selected || busy}
           >
-            {loading ? "Submitting…" : "Vote"}
-          </button>
-          {msg && <div className="err">{msg}</div>}
+            {busy ? <Spinner size="sm" /> : "Vote"}
+          </Button>
+          <Button variant="outline-secondary" onClick={load}>
+            Refresh
+          </Button>
         </div>
 
-        <div className="share">
-          <span className="muted">Share:</span> <code>{shareUrl}</code>
+        <div className="mt-3 text-muted">
+          Share:{" "}
+          <code>
+            {window.location.origin}/p/{id}
+          </code>
         </div>
-      </section>
+      </Card>
 
-      <section className="card">
-        <h3>Results</h3>
-        <p className="muted">Total votes: {total}</p>
-        <div className="results">
-          {poll.options.map((o) => (
-            <div key={o.id} className="resultRow">
-              <div className="label">
-                <strong>{o.text}</strong>
-                <span>
-                  {o.votes} ({o.percentage}%)
-                </span>
-              </div>
-              <Bar pct={o.percentage} />
-            </div>
-          ))}
-        </div>
-        <button className="ghost" onClick={load} style={{ marginTop: 8 }}>
-          Refresh
-        </button>
-      </section>
+      <Card body>
+        <h5>Results</h5>
+        <ResultsList options={poll.options} total={poll.totalVotes} />
+      </Card>
     </div>
   );
 }

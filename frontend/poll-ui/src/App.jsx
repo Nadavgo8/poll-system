@@ -1,41 +1,43 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
-import PollsList from "./pages/PollsList.jsx";
-import NewPoll from "./pages/NewPoll.jsx";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { Container, Navbar, Nav } from "react-bootstrap";
+import PollsPage from "./pages/PollsPage.jsx";
+import NewPollPage from "./pages/NewPollPage.jsx";
 import PollPage from "./pages/PollPage.jsx";
-import "./styles.css";
 
-function Layout({ children }) {
+function AppNavbar() {
   return (
-    <>
-      <header className="topbar">
-        <div className="container">
-          <Link to="/polls" className="brand">
-            Polls
-          </Link>
-          <nav>
-            <Link to="/polls">All</Link>
-            <Link to="/new">Create</Link>
-          </nav>
-        </div>
-      </header>
-      <main className="container">{children}</main>
-    </>
+    <Navbar bg="dark" variant="dark" expand="sm" className="mb-3">
+      <Container>
+        <Navbar.Brand as={Link} to="/polls">
+          Polls
+        </Navbar.Brand>
+        <Nav className="me-auto">
+          <Nav.Link as={Link} to="/polls">
+            All
+          </Nav.Link>
+          <Nav.Link as={Link} to="/new">
+            Create
+          </Nav.Link>
+        </Nav>
+      </Container>
+    </Navbar>
   );
 }
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Layout>
+      <AppNavbar />
+      <Container className="pb-4">
         <Routes>
           <Route path="/" element={<Navigate to="/polls" replace />} />
-          <Route path="/polls" element={<PollsList />} />
-          <Route path="/new" element={<NewPoll />} />
+          <Route path="/polls" element={<PollsPage />} />
+          <Route path="/new" element={<NewPollPage />} />
           <Route path="/p/:id" element={<PollPage />} />
-          <Route path="*" element={<div className="card">Not found</div>} />
+          <Route path="*" element={<div>Not found</div>} />
         </Routes>
-      </Layout>
+      </Container>
     </BrowserRouter>
   );
 }
