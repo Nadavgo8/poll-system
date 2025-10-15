@@ -1,35 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import PollsList from "./pages/PollsList.jsx";
+import NewPoll from "./pages/NewPoll.jsx";
+import PollPage from "./pages/PollPage.jsx";
+import "./styles.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Layout({ children }) {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <header className="topbar">
+        <div className="container">
+          <Link to="/polls" className="brand">
+            Polls
+          </Link>
+          <nav>
+            <Link to="/polls">All</Link>
+            <Link to="/new">Create</Link>
+          </nav>
+        </div>
+      </header>
+      <main className="container">{children}</main>
     </>
-  )
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Navigate to="/polls" replace />} />
+          <Route path="/polls" element={<PollsList />} />
+          <Route path="/new" element={<NewPoll />} />
+          <Route path="/p/:id" element={<PollPage />} />
+          <Route path="*" element={<div className="card">Not found</div>} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
+}

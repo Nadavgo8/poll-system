@@ -1,0 +1,34 @@
+:root { --bg:#0b0c10; --card:#11131a; --text:#e6e8ee; --muted:#9aa3af; --accent:#4f8cff; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,Segoe UI,Roboto,Arial; }
+a { color: var(--text); text-decoration: none; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+.topbar { border-bottom: 1px solid #1e2230; position: sticky; top: 0; backdrop-filter: blur(6px); background: rgba(11,12,16,0.7); }
+.brand { font-weight: 700; margin-right: 16px; }
+nav a { margin-left: 12px; opacity: .9; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+.card { background: var(--card); border: 1px solid #1e2230; border-radius: 12px; padding: 16px; }
+.field { display: grid; gap: 6px; margin: 10px 0; }
+.field > span { color: var(--muted); font-size: 12px; }
+input { width: 100%; padding: 10px 12px; border: 1px solid #2a3142; border-radius: 8px; background: #0f1320; color: var(--text); }
+button { padding: 10px 14px; border: 1px solid #2a3142; border-radius: 10px; background: #151a27; color: var(--text); cursor: pointer; }
+button:hover { border-color: #384057; }
+button.ghost { background: transparent; }
+.actions { margin-top: 10px; display: flex; gap: 10px; align-items: center; }
+.err { color: #ff6b6b; margin-left: 8px; }
+.muted { color: var(--muted); }
+
+.options .row { display:flex; justify-content:space-between; align-items:center; margin: 6px 0; }
+.option-row { display:flex; gap:8px; margin: 6px 0; }
+
+.choices { display: grid; gap: 8px; margin: 12px 0; }
+.choice { display:flex; gap:8px; align-items:center; padding:8px; border:1px solid #23283a; border-radius:10px; }
+
+.results { display: grid; gap: 10px; }
+.resultRow .label { display:flex; justify-content:space-between; margin-bottom:6px; }
+.bar { height: 8px; background:#1b2130; border-radius: 999px; overflow: hidden; }
+.barFill { height: 100%; background: var(--accent); }
+.share { margin-top: 12px; }

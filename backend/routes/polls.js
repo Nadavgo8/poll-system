@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  listPolls,
   createPoll,
   getPoll,
   voteOnPoll,
@@ -7,6 +8,7 @@ import {
 } from "../controllers/polls.js";
 
 const router = Router();
+router.get("/", listPolls);
 router.post("/", createPoll);
 router.get("/:id", getPoll);
 router.post("/:id/votes", voteOnPoll);

@@ -105,3 +105,32 @@ export async function voteOnPoll(req, res) {
     return res.status(500).json({ message: "Failed to vote" });
   }
 }
+
+export async function listPolls(req, res) {
+  const limit = Math.min(parseInt(req.query.limit ?? "50", 10), 100);
+  const offset = Math.max(parseInt(req.query.offset ?? "0", 10), 0);
+
+  try {
+    const rows = await Poll.findAll({
+      attributes: [
+        "id",
+        "title",
+        "creator",
+        "createdAt",
+        [fn("COUNT", col("votes.id")), "totalVotes"], // <-- uses the include alias
+      ],
+      include: [{ model: Vote, as: "votes", attributes: [], required: false }],
+      group: ["Poll.id", "Poll.title", "Poll.creator", "Poll.createdAt"], // FULL_GROUP_BY-safe
+      order: [["createdAt", "DESC"]],
+      limit,
+      offset,
+      subQuery: false, // <-- prevents Sequelize from wrapping in a subquery
+      raw: true,
+    });
+
+    return res.json(rows);
+  } catch (e) {
+    console.error("listPolls error:", e);
+    return res.status(500).json({ message: "Failed to list polls" });
+  }
+}
