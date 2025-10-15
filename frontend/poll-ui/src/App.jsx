@@ -9,9 +9,7 @@ function AppNavbar() {
   return (
     <Navbar bg="dark" variant="dark" expand="sm" className="mb-3">
       <Container>
-        <Navbar.Brand as={Link} to="/polls">
-          Polls
-        </Navbar.Brand>
+        <Navbar.Brand>Polls</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link as={Link} to="/polls">
             All
